@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mark Register</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F2F5F8;--card:#fff;--ink:#14213D;--mute:#566277;--line:#D5DCE6;--accent:#2457A6;--onacc:#fff;--pass:#1F7A5C;--fail:#C0302A;--mark:#FFE27A;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0F1624;--card:#17213A;--ink:#E8EDF5;--mute:#A3AFC4;--line:#2C3956;--accent:#7BA7F0;--onacc:#0F1624;--pass:#4CC39A;--fail:#FF8A7E;--mark:#7A6410}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0F1624;--card:#17213A;--ink:#E8EDF5;--mute:#A3AFC4;--line:#2C3956;--accent:#7BA7F0;--onacc:#0F1624;--pass:#4CC39A;--fail:#FF8A7E;--mark:#7A6410}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 48px}
+h1,h2{font-family:"Source Serif 4",Georgia,serif;line-height:1.2;margin:0}
+h1{font-size:2rem}h2{font-size:1.2rem;margin-bottom:12px}
+.sub{color:var(--mute);margin:4px 0 20px}
+nav{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line);margin-bottom:20px}
+nav button{font:inherit;font-weight:600;background:none;border:0;padding:10px 14px;color:var(--mute);cursor:pointer;white-space:nowrap}
+nav button[aria-selected=true]{color:var(--ink);background:linear-gradient(transparent 55%,var(--mark) 55%)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:16px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px}
+.stat b{display:block;font:700 1.6rem "Source Serif 4",Georgia,serif}
+.stat span{color:var(--mute);font-size:.9rem}
+.charts{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-bottom:16px}
+.charts .card{margin:0}
+.br{display:grid;grid-template-columns:minmax(90px,130px) 1fr 54px;gap:8px;align-items:center;margin:8px 0;font-size:.9rem}
+.br i{height:16px;border-radius:3px;background:linear-gradient(90deg,var(--c) var(--w),var(--line) var(--w))}
+.br b{text-align:right;font-variant-numeric:tabular-nums}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:.85rem;color:var(--mute);font-weight:600}
+form{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));align-items:end}
+label{display:grid;gap:4px;font-size:.9rem;color:var(--mute)}
+input,select{font:inherit;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);min-width:0;width:100%}
+.b{font:inherit;font-weight:600;padding:9px 16px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:var(--onacc);cursor:pointer}
+.l{font:inherit;background:none;border:0;color:var(--accent);cursor:pointer;padding:2px 6px;text-decoration:underline}
+.l.d{color:var(--fail)}
+.msg{margin:0 0 12px;font-weight:600}
+form .msg{grid-column:1/-1;margin:0}
+.msg:empty{display:none}
+.ok{color:var(--pass)}.err,.fail{color:var(--fail)}.pass{color:var(--pass)}.fail{font-weight:600}
+.pill{display:inline-block;padding:0 9px;border:1px solid var(--line);border-radius:99px;font-weight:600;font-size:.85rem}
+.hl{background:linear-gradient(transparent 50%,var(--mark) 50%);font-weight:600}
+.flt{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px;align-items:end}
+.flt label{min-width:140px}
+.note{color:var(--mute);font-size:.9rem;margin:0}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Mark Register</h1>
+  <p class="sub">Student records, marks and performance analysis</p>
+  <nav role="tablist" aria-label="Sections">
+    <button role="tab" data-t="dash">Dashboard</button>
+    <button role="tab" data-t="stu">Students</button>
+    <button role="tab" data-t="sub">Subjects</button>
+    <button role="tab" data-t="mk">Marks</button>
+    <button role="tab" data-t="rep">Report</button>
+     <button role="tab" data-t="pdf">Project PDF</button>
+  </nav>
+  <main id="main"></main>
+  <p class="note">Records are saved in this browser. <button class="l" data-a="reset">Reset sample data</button></p>
+</div>
+<script>
+const K='markregister.v1';
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const f1=n=>String(Math.round(n*10)/10);
+const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
+const med=a=>{const s=[...a].sort((x,y)=>x-y),n=s.length,h=n>>1;return n?(n%2?s[h]:(s[h-1]+s[h])/2):0};
+const nx=a=>a.reduce((m,x)=>Math.max(m,x.id),0)+1;
+const grade=p=>p>=90?'A+':p>=80?'A':p>=70?'B':p>=60?'C':p>=50?'D':p>=35?'E':'F';
+function seed(){let r=7;const R=()=>(r=(r*16807)%2147483647)/2147483647;
+  const names=["Aarav Mehta","Diya Nair","Kabir Shah","Isha Rao","Rohan Iyer","Meera Das","Vihaan Kapoor","Ananya Roy","Arjun Pillai","Sara Khan","Neel Joshi","Tara Menon"];
+  const students=names.map((n,i)=>({id:i+1,roll:String(101+i),name:n,section:i%2?'B':'A'}));
+  const subjects=[["Mathematics",100,35],["Science",100,35],["English",100,35],["Social Studies",100,35],["Computer Science",50,18]].map((s,i)=>({id:i+1,name:s[0],max:s[1],pass:s[2]}));
+  const marks=[];let id=1;
+  students.forEach(st=>{const a=0.3+R()*0.62;subjects.forEach(su=>{marks.push({id:id++,sid:st.id,sub:su.id,as:'Term 1',m:Math.max(0,Math.min(su.max,Math.round(su.max*(a+(R()-.5)*.3))))})})});
+  return {students,subjects,marks}}
+let db;try{db=JSON.parse(localStorage.getItem(K))}catch(e){}
+if(!db||!db.students||!db.subjects||!db.marks)db=seed();
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(db))}catch(e){}};
+let tab='dash',edit={},note='',filt={sec:'',stu:'',thr:50,top:3};
+const sub=id=>db.subjects.find(s=>s.id==id);
+const inSec=s=>!filt.sec||s.section==filt.sec;
+function stats(){return db.students.filter(inSec).map(st=>{const ms=db.marks.filter(m=>m.sid==st.id&&sub(m.sub));
+  if(!ms.length)return {st,none:1};let t=0,mx=0,fails=[];
+  ms.forEach(m=>{const su=sub(m.sub);t+=m.m;mx+=su.max;if(m.m<su.pass)fails.push(su.name)});
+  const p=t/mx*100;return {st,t,mx,p,g:grade(p),pass:!fails.length,fails}})}
+function subjSummary(){const ids=new Set(db.students.filter(inSec).map(s=>s.id));
+  return db.subjects.map(su=>{const v=db.marks.filter(m=>m.sub==su.id&&ids.has(m.sid)).map(m=>m.m),n=v.length;
+    return {su,n,mean:avg(v),med:med(v),min:n?Math.min(...v):0,max:n?Math.max(...v):0,pct:avg(v)/su.max*100,pp:n?v.filter(x=>x>=su.pass).length/n*100:0}})}
+const bars=(label,items,max,fmt)=>`<div role="img" aria-label="${label}">`+items.map(i=>`<div class="br"><span>${esc(i.l)}</span><i style="--w:${Math.max(0,Math.min(100,i.v/max*100))}%;--c:${i.c||'var(--accent)'}"></i><b>${fmt(i.v)}</b></div>`).join('')+'</div>';
+const opts=(list,txt,sel)=>list.map(x=>`<option value="${x.id}"${x.id==sel?' selected':''}>${esc(txt(x))}</option>`).join('');
+const secSel=()=>`<label>Section<select data-f="sec"><option value="">All sections</option>${[...new Set(db.students.map(s=>s.section))].sort().map(s=>`<option${s==filt.sec?' selected':''}>${esc(s)}</option>`).join('')}</select></label>`;
+const empty=c=>`<tr><td colspan="${c}">Nothing here yet. Add a record using the form above.</td></tr>`;
+
+function dash(){const rows=stats(),w=rows.filter(r=>!r.none),ss=subjSummary(),ps=w.filter(r=>r.pass).length;
+  const bins=[[0,35,'Below 35%'],[35,50,'35–49%'],[50,60,'50–59%'],[60,70,'60–69%'],[70,80,'70–79%'],[80,90,'80–89%'],[90,101,'90–100%']].map(b=>({l:b[2],v:w.filter(r=>r.p>=b[0]&&r.p<b[1]).length,c:b[0]==0?'var(--fail)':''}));
+  return `<div class="flt">${secSel()}</div>
+  <div class="grid"><div class="stat"><b>${rows.length}</b><span>Students</span></div><div class="stat"><b>${f1(avg(w.map(r=>r.p)))}%</b><span>Class average</span></div>
+  <div class="stat"><b class="pass">${ps}</b><span>Passed all subjects</span></div><div class="stat"><b class="fail">${w.length-ps}</b><span>Failed one or more</span></div>
+  <div class="stat"><b>${w.length?f1(ps/w.length*100):0}%</b><span>Pass rate</span></div></div>
+  ${w.length?`<div class="charts"><div class="card"><h2>Subject averages</h2>${bars('Subject averages as a percentage of maximum marks',ss.map(x=>({l:x.su.name,v:x.pct})),100,v=>f1(v)+'%')}</div>
+  <div class="card"><h2>Pass percentage by subject</h2>${bars('Pass percentage by subject',ss.map(x=>({l:x.su.name,v:x.pp,c:'var(--pass)'})),100,v=>f1(v)+'%')}</div>
+  <div class="card"><h2>Distribution of student percentages</h2>${bars('Number of students in each percentage band',bins,Math.max(1,...bins.map(b=>b.v)),v=>v)}</div></div>`:'<div class="card">Add students, subjects and marks to see charts.</div>'}
+  <div class="card tw"><h2>Subject summary</h2><table><tr><th>Subject</th><th>Records</th><th>Mean</th><th>Median</th><th>Min</th><th>Max</th><th>Pass %</th></tr>
+  ${ss.map(x=>`<tr><td>${esc(x.su.name)}</td><td>${x.n}</td><td>${f1(x.mean)}</td><td>${f1(x.med)}</td><td>${x.min}</td><td>${x.max}</td><td>${f1(x.pp)}%</td></tr>`).join('')||empty(7)}</table></div>`}
+
+function studentsV(){const e=db.students.find(s=>s.id==edit.stu)||{};
+  return `<div class="card"><h2>${e.id?'Edit student':'Add student'}</h2><form data-form="stu"><label>Roll number<input name="roll" value="${esc(e.roll||'')}" required></label><label>Name<input name="name" value="${esc(e.name||'')}" required></label><label>Section<input name="section" value="${esc(e.section||'')}" maxlength="4" required></label>
+  <div><button class="b">${e.id?'Save changes':'Add student'}</button>${e.id?' <button type="button" class="l" data-a="cancel">Cancel</button>':''}</div><p class="msg err" role="alert"></p></form></div>
+  <div class="card tw"><table><tr><th>Roll</th><th>Name</th><th>Section</th><th></th></tr>${db.students.map(s=>`<tr><td>${esc(s.roll)}</td><td>${esc(s.name)}</td><td>${esc(s.section)}</td><td><button class="l" data-a="edit-stu" data-id="${s.id}">Edit</button><button class="l d" data-a="del-stu" data-id="${s.id}">Delete</button></td></tr>`).join('')||empty(4)}</table></div>`}
+
+function subjectsV(){const e=db.subjects.find(s=>s.id==edit.sub)||{};
+  return `<div class="card"><h2>${e.id?'Edit subject':'Add subject'}</h2><form data-form="sub"><label>Subject name<input name="name" value="${esc(e.name||'')}" required></label><label>Maximum marks<input name="max" type="number" min="1" step="any" value="${e.max??''}" required></label><label>Pass marks<input name="pass" type="number" min="0" step="any" value="${e.pass??''}" required></label>
+  <div><button class="b">${e.id?'Save changes':'Add subject'}</button>${e.id?' <button type="button" class="l" data-a="cancel">Cancel</button>':''}</div><p class="msg err" role="alert"></p></form></div>
+  <div class="card tw"><table><tr><th>Subject</th><th>Maximum</th><th>Pass marks</th><th></th></tr>${db.subjects.map(s=>`<tr><td>${esc(s.name)}</td><td>${s.max}</td><td>${s.pass}</td><td><button class="l" data-a="edit-sub" data-id="${s.id}">Edit</button><button class="l d" data-a="del-sub" data-id="${s.id}">Delete</button></td></tr>`).join('')||empty(4)}</table></div>`}
+
+function marksV(){const e=db.marks.find(m=>m.id==edit.mk)||{};const st=Object.fromEntries(db.students.map(s=>[s.id,s]));
+  const list=db.marks.filter(m=>st[m.sid]&&sub(m.sub)&&(!filt.stu||m.sid==filt.stu)).sort((a,b)=>st[a.sid].roll.localeCompare(st[b.sid].roll,undefined,{numeric:true})||a.sub-b.sub);
+  return `<div class="card"><h2>${e.id?'Edit marks':'Enter marks'}</h2><form data-form="mk"><label>Student<select name="sid">${opts(db.students,s=>s.roll+' · '+s.name,e.sid)}</select></label><label>Subject<select name="sub">${opts(db.subjects,s=>`${s.name} (max ${s.max})`,e.sub)}</select></label>
+  <label>Assessment<input name="as" value="${esc(e.as||'Term 1')}" required></label><label>Marks obtained<input name="m" type="number" min="0" step="any" value="${e.m??''}" required></label>
+  <div><button class="b">${e.id?'Save changes':'Save marks'}</button>${e.id?' <button type="button" class="l" data-a="cancel">Cancel</button>':''}</div><p class="msg err" role="alert"></p></form></div>
+  <div class="flt"><label>Show marks for<select data-f="stu"><option value="">All students</option>${opts(db.students,s=>s.roll+' · '+s.name,filt.stu)}</select></label></div>
+  <div class="card tw"><table><tr><th>Roll</th><th>Student</th><th>Subject</th><th>Assessment</th><th>Marks</th><th>Result</th><th></th></tr>
+  ${list.map(m=>{const su=sub(m.sub),ok=m.m>=su.pass;return `<tr><td>${esc(st[m.sid].roll)}</td><td>${esc(st[m.sid].name)}</td><td>${esc(su.name)}</td><td>${esc(m.as)}</td><td>${m.m} / ${su.max}</td><td class="${ok?'pass':'fail'}">${ok?'Pass':'Fail'}</td><td><button class="l" data-a="edit-mk" data-id="${m.id}">Edit</button><button class="l d" data-a="del-mk" data-id="${m.id}">Delete</button></td></tr>`}).join('')||empty(7)}</table></div>`}
+
+function rep(){const rows=stats().filter(r=>!r.none),by=[...rows].sort((a,b)=>b.p-a.p);
+  const top=by.slice(0,Math.max(0,filt.top||0)),low=[...by].reverse().filter(r=>r.p<filt.thr);
+  return `<div class="flt">${secSel()}<label>Toppers to show<input data-f="top" type="number" min="1" max="50" value="${filt.top}"></label><label>Low-performer threshold (%)<input data-f="thr" type="number" min="0" max="100" value="${filt.thr}"></label></div>
+  <div class="card tw"><h2>Topper list</h2><table><tr><th>Rank</th><th>Roll</th><th>Name</th><th>Section</th><th>Percentage</th><th>Grade</th></tr>${top.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.st.roll)}</td><td class="hl">${esc(r.st.name)}</td><td>${esc(r.st.section)}</td><td>${f1(r.p)}%</td><td><span class="pill">${r.g}</span></td></tr>`).join('')||empty(6)}</table></div>
+  <div class="card tw"><h2>Students below ${filt.thr}%</h2><table><tr><th>Roll</th><th>Name</th><th>Section</th><th>Percentage</th><th>Failed subjects</th></tr>${low.map(r=>`<tr><td>${esc(r.st.roll)}</td><td>${esc(r.st.name)}</td><td>${esc(r.st.section)}</td><td class="fail">${f1(r.p)}%</td><td>${r.fails.length?esc(r.fails.join(', ')):'None'}</td></tr>`).join('')||`<tr><td colspan="5">No student is below this threshold.</td></tr>`}</table></div>
+  <div class="card tw"><h2>Student performance report</h2><table><tr><th>Roll</th><th>Name</th><th>Section</th><th>Total</th><th>Percentage</th><th>Grade</th><th>Status</th></tr>${rows.map(r=>`<tr><td>${esc(r.st.roll)}</td><td>${esc(r.st.name)}</td><td>${esc(r.st.section)}</td><td>${r.t} / ${r.mx}</td><td>${f1(r.p)}%</td><td><span class="pill">${r.g}</span></td><td class="${r.pass?'pass':'fail'}">${r.pass?'Pass':'Fail'}</td></tr>`).join('')||empty(7)}</table></div>
+  <div class="card"><h2>Rules used</h2><p class="note">Percentage = total marks obtained ÷ total maximum marks of the subjects marked × 100. A student passes only when every subject mark is at or above that subject’s pass marks. Grades: A+ 90 and above, A 80, B 70, C 60, D 50, E 35, F below 35.</p></div>`}
+
+function pdfV(){return `<div class="card"><h2>Student Performance Analysis System — Project Report & Base Paper</h2>
+  <p class="note">The PDF is displayed below. Use the PDF viewer controls to navigate pages, zoom, or print.</p>
+  <p><a class="b" href="Student_Performance_Analysis_System_Project_Report.pdf" target="_blank" rel="noopener">Open PDF in a new tab</a>
+  <a class="l" href="Student_Performance_Analysis_System_Project_Report.pdf" download>Download PDF</a></p>
+  <iframe title="Student Performance Analysis System project report and base paper" src="Student_Performance_Analysis_System_Project_Report.pdf#view=FitH" style="display:block;width:100%;height:78vh;min-height:520px;border:1px solid var(--line);border-radius:6px;background:white"></iframe>
+  <p class="note">If the PDF does not appear inside this page, select “Open PDF in a new tab”.</p></div>`}
+function render(){document.querySelectorAll('[role=tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.t==tab));
+  $main.innerHTML=(note?`<p class="msg ok" role="status">${note}</p>`:'')+({dash,stu:studentsV,sub:subjectsV,mk:marksV,rep,pdf:pdfV}[tab])();note=''}
+const $main=document.getElementById('main');
+const msg=(f,t)=>{f.querySelector('.msg').textContent=t};
+const done=()=>{edit={};note='Saved.';save();render()};
+function act(a,id,b){id=+id;
+  if(a=='cancel'){edit={};return render()}
+  if(a=='reset'){if(!b.dataset.arm){b.dataset.arm=1;b.textContent='Confirm reset';return}db=seed();edit={};filt.stu='';note='Sample data restored.';save();return render()}
+  const [op,k]=a.split('-');
+  if(op=='edit'){edit={[k]:id};return render()}
+  if(op=='del'){if(!b.dataset.arm){b.dataset.arm=1;b.textContent='Confirm';return}
+    if(k=='stu'){db.students=db.students.filter(s=>s.id!=id);db.marks=db.marks.filter(m=>m.sid!=id)}
+    if(k=='sub'){db.subjects=db.subjects.filter(s=>s.id!=id);db.marks=db.marks.filter(m=>m.sub!=id)}
+    if(k=='mk')db.marks=db.marks.filter(m=>m.id!=id);
+    note='Deleted.';save();render()}}
+function submit(kind,fd,f){
+  if(kind=='stu'){const roll=fd.get('roll').trim(),name=fd.get('name').trim(),section=fd.get('section').trim().toUpperCase();
+    if(!roll||!name||!section)return msg(f,'Enter a roll number, name and section.');
+    if(db.students.some(s=>s.roll==roll&&s.id!=edit.stu))return msg(f,'That roll number is already in use.');
+    if(edit.stu)Object.assign(db.students.find(s=>s.id==edit.stu),{roll,name,section});else db.students.push({id:nx(db.students),roll,name,section});return done()}
+  if(kind=='sub'){const name=fd.get('name').trim(),max=Number(fd.get('max')),pass=Number(fd.get('pass'));
+    if(!name||!(max>0))return msg(f,'Enter a subject name and a maximum above 0.');
+    if(!(pass>=0&&pass<=max))return msg(f,`Pass marks must be between 0 and ${max}.`);
+    if(db.subjects.some(s=>s.name.toLowerCase()==name.toLowerCase()&&s.id!=edit.sub))return msg(f,'That subject already exists.');
+    if(edit.sub&&db.marks.some(m=>m.sub==edit.sub&&m.m>max))return msg(f,'Some saved marks are higher than this maximum. Correct those marks first.');
+    if(edit.sub)Object.assign(sub(edit.sub),{name,max,pass});else db.subjects.push({id:nx(db.subjects),name,max,pass});return done()}
+  if(kind=='mk'){const sid=+fd.get('sid'),uid=+fd.get('sub'),as=fd.get('as').trim(),raw=fd.get('m').trim(),m=Number(raw),su=sub(uid);
+    if(!sid||!su||!as||raw==='')return msg(f,'Choose a student and subject, name the assessment and enter the marks.');
+    if(!isFinite(m)||m<0||m>su.max)return msg(f,`Marks must be between 0 and ${su.max} for ${su.name}. Nothing was saved.`);
+    if(db.marks.some(x=>x.sid==sid&&x.sub==uid&&x.as.toLowerCase()==as.toLowerCase()&&x.id!=edit.mk))return msg(f,'This student already has marks for that subject and assessment. Edit the existing record instead.');
+    if(edit.mk)Object.assign(db.marks.find(x=>x.id==edit.mk),{sid,sub:uid,as,m});else db.marks.push({id:nx(db.marks),sid,sub:uid,as,m});return done()}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a],[data-t]');if(!b)return;
+  if(b.dataset.t){tab=b.dataset.t;edit={};render()}else act(b.dataset.a,b.dataset.id,b)});
+document.addEventListener('change',e=>{const t=e.target,k=t.dataset.f;if(k){filt[k]=t.type=='number'?Math.max(0,+t.value||0):t.value;render()}});
+document.addEventListener('submit',e=>{e.preventDefault();const f=e.target;submit(f.dataset.form,new FormData(f),f)});
+render();
+</script>
+</body>
+</html>
